@@ -1,0 +1,41 @@
+name: Publish n8n-nodes-threatcluster to npm
+
+# n8n's verified-node programme (from May 2026) only accepts packages published
+# by GitHub Actions with a provenance statement, so releases go through here:
+# bump package.json, commit, then `git tag vX.Y.Z && git push origin vX.Y.Z`.
+# npmjs.com -> package -> Settings -> Trusted publishing must list this
+# repository and workflow; no token is stored anywhere.
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  publish:
+    name: Build, lint, publish with provenance
+    runs-on: ubuntu-latest
+    environment:
+      name: npm
+      url: https://www.npmjs.com/package/n8n-nodes-threatcluster
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+      - name: Verify tag matches package.json
+        run: |
+          tag="${GITHUB_REF#refs/tags/v}"
+          js=$(node -p "require('./package.json').version")
+          if [ "$tag" != "$js" ]; then echo "::error ::tag $tag vs package.json $js"; exit 1; fi
+      - name: npm >= 11.5 for trusted publishing
+        run: npm install -g npm@latest && npm --version
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
+      - name: Publish
+        run: npm publish --access public --provenance

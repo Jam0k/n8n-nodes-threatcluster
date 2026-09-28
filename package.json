@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-threatcluster",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ThreatCluster node for n8n: threat incidents, CVE exploitation signals, validated IOCs and ransomware leak-site activity",
   "keywords": [
     "n8n-community-node-package",
