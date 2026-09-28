@@ -6,7 +6,7 @@ import type {
 	IHttpRequestOptions,
 	JsonObject,
 } from 'n8n-workflow';
-import { NodeConnectionType, NodeOperationError } from 'n8n-workflow';
+import { NodeApiError, NodeConnectionType, NodeOperationError } from 'n8n-workflow';
 
 /**
  * ThreatCluster polling trigger.
@@ -27,7 +27,7 @@ export class ThreatClusterTrigger implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'ThreatCluster Trigger',
 		name: 'threatClusterTrigger',
-		icon: 'file:threatcluster.svg',
+		icon: { light: 'file:threatcluster.svg', dark: 'file:threatcluster.dark.svg' },
 		group: ['trigger'],
 		version: 1,
 		subtitle: '={{$parameter["event"]}}',
@@ -170,7 +170,7 @@ export class ThreatClusterTrigger implements INodeType {
 			if (status === '401') {
 				throw new NodeOperationError(this.getNode(), 'The API key was rejected. Check the credential.');
 			}
-			throw error;
+			throw new NodeApiError(this.getNode(), error as JsonObject);
 		}
 
 		const rows = (payload[listKey] as JsonObject[]) ?? [];

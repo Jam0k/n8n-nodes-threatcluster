@@ -20,8 +20,9 @@ export class ThreatCluster implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'ThreatCluster',
 		name: 'threatCluster',
-		icon: 'file:threatcluster.svg',
+		icon: { light: 'file:threatcluster.svg', dark: 'file:threatcluster.dark.svg' },
 		group: ['transform'],
+		usableAsTool: true,
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description: 'Threat intelligence: incidents, CVEs, IOCs and ransomware leak-site activity',
@@ -39,16 +40,14 @@ export class ThreatCluster implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				default: 'threat',
-				// Deliberate order (most used first), not alphabetical.
-				// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 				options: [
-					{ name: 'Threat Incident', value: 'threat' },
-					{ name: 'Vulnerability', value: 'vulnerability' },
+					{ name: 'Account', value: 'account' },
+					{ name: 'Ask AI', value: 'ai' },
 					{ name: 'Dark Web', value: 'darkweb' },
 					{ name: 'Entity', value: 'entity' },
 					{ name: 'IOC', value: 'ioc' },
-					{ name: 'Ask AI', value: 'ai' },
-					{ name: 'Account', value: 'account' },
+					{ name: 'Threat Incident', value: 'threat' },
+					{ name: 'Vulnerability', value: 'vulnerability' },
 				],
 			},
 
@@ -60,12 +59,10 @@ export class ThreatCluster implements INodeType {
 				noDataExpression: true,
 				displayOptions: { show: { resource: ['threat'] } },
 				default: 'getMany',
-				// Deliberate order (most used first), not alphabetical.
-				// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 				options: [
-					{ name: 'Get Many', value: 'getMany', description: 'List recent incidents', action: 'List threat incidents' },
 					{ name: 'Get', value: 'get', description: 'One incident by ID', action: 'Get a threat incident' },
-					{ name: 'Get IOCs', value: 'getIocs', description: 'Indicators for one incident', action: 'Get IOCs for an incident' }, // eslint-disable-line n8n-nodes-base/node-param-operation-option-action-miscased
+					{ name: 'Get IOCs', value: 'getIocs', description: 'Indicators for one incident', action: 'Get indicators for an incident' },
+					{ name: 'Get Many', value: 'getMany', description: 'List recent incidents', action: 'List threat incidents' },
 					{ name: 'Get STIX', value: 'getStix', description: 'STIX 2.1 bundle for one incident', action: 'Get a STIX bundle' },
 					{ name: 'Search', value: 'search', description: 'Search incidents, entities and leak-site data', action: 'Search the corpus' },
 				],
@@ -239,15 +236,13 @@ export class ThreatCluster implements INodeType {
 				name: 'entityType',
 				type: 'options',
 				default: 'apt-group',
-				// Deliberate order (most used first), not alphabetical.
-				// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 				options: [
 					{ name: 'APT Group', value: 'apt-group' },
-					{ name: 'Ransomware Group', value: 'ransomware-group' },
-					{ name: 'Malware', value: 'malware' },
 					{ name: 'Company', value: 'company' },
-					{ name: 'Platform', value: 'platform' },
 					{ name: 'CVE', value: 'cve' },
+					{ name: 'Malware', value: 'malware' },
+					{ name: 'Platform', value: 'platform' },
+					{ name: 'Ransomware Group', value: 'ransomware-group' },
 				],
 				displayOptions: { show: { resource: ['entity'], operation: ['get'] } },
 			},

@@ -1,5 +1,6 @@
 import type {
 	IAuthenticateGeneric,
+	Icon,
 	ICredentialTestRequest,
 	ICredentialType,
 	INodeProperties,
@@ -9,6 +10,8 @@ export class ThreatClusterApi implements ICredentialType {
 	name = 'threatClusterApi';
 
 	displayName = 'ThreatCluster API';
+
+	icon: Icon = { light: 'file:threatcluster.svg', dark: 'file:threatcluster.dark.svg' };
 
 	// eslint-disable-next-line n8n-nodes-base/cred-class-field-documentation-url-miscased
 	documentationUrl = 'https://threatcluster.io/about/api-reference';
