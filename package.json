@@ -1,0 +1,57 @@
+{
+  "name": "n8n-nodes-threatcluster",
+  "version": "0.1.0",
+  "description": "ThreatCluster node for n8n: threat incidents, CVE exploitation signals, validated IOCs and ransomware leak-site activity",
+  "keywords": [
+    "n8n-community-node-package",
+    "threat-intelligence",
+    "cybersecurity",
+    "cti",
+    "ransomware",
+    "cve",
+    "ioc"
+  ],
+  "license": "MIT",
+  "homepage": "https://threatcluster.io/integrations/n8n",
+  "author": {
+    "name": "ThreatCluster",
+    "email": "hello@threatcluster.io"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Jam0k/n8n-nodes-threatcluster.git"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "npx rimraf dist && tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "lint": "eslint nodes credentials package.json",
+    "prepublishOnly": "npm run build && npm run lint"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/ThreatClusterApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/ThreatCluster/ThreatCluster.node.js",
+      "dist/nodes/ThreatCluster/ThreatClusterTrigger.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.3",
+    "gulp": "^5.0.0",
+    "n8n-workflow": "^1.82.0",
+    "typescript": "^5.5.4"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}
