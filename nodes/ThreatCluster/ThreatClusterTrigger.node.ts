@@ -35,6 +35,7 @@ export class ThreatClusterTrigger implements INodeType {
 		defaults: { name: 'ThreatCluster Trigger' },
 		polling: true,
 		inputs: [],
+		// eslint-disable-next-line n8n-nodes-base/node-class-description-outputs-wrong
 		outputs: [NodeConnectionType.Main],
 		credentials: [{ name: 'threatClusterApi', required: true }],
 		properties: [

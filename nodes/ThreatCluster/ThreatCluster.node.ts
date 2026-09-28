@@ -26,7 +26,10 @@ export class ThreatCluster implements INodeType {
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
 		description: 'Threat intelligence: incidents, CVEs, IOCs and ransomware leak-site activity',
 		defaults: { name: 'ThreatCluster' },
+		// NodeConnectionType.Main, not the string: n8n-workflow 1.82 types inputs as the enum and tsc rejects 'main'.
+		// eslint-disable-next-line n8n-nodes-base/node-class-description-inputs-wrong-regular-node
 		inputs: [NodeConnectionType.Main],
+		// eslint-disable-next-line n8n-nodes-base/node-class-description-outputs-wrong
 		outputs: [NodeConnectionType.Main],
 		credentials: [{ name: 'threatClusterApi', required: true }],
 		properties: [
@@ -36,6 +39,8 @@ export class ThreatCluster implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				default: 'threat',
+				// Deliberate order (most used first), not alphabetical.
+				// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 				options: [
 					{ name: 'Threat Incident', value: 'threat' },
 					{ name: 'Vulnerability', value: 'vulnerability' },
@@ -55,10 +60,12 @@ export class ThreatCluster implements INodeType {
 				noDataExpression: true,
 				displayOptions: { show: { resource: ['threat'] } },
 				default: 'getMany',
+				// Deliberate order (most used first), not alphabetical.
+				// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 				options: [
 					{ name: 'Get Many', value: 'getMany', description: 'List recent incidents', action: 'List threat incidents' },
 					{ name: 'Get', value: 'get', description: 'One incident by ID', action: 'Get a threat incident' },
-					{ name: 'Get IOCs', value: 'getIocs', description: 'Indicators for one incident', action: 'Get IOCs for an incident' },
+					{ name: 'Get IOCs', value: 'getIocs', description: 'Indicators for one incident', action: 'Get IOCs for an incident' }, // eslint-disable-line n8n-nodes-base/node-param-operation-option-action-miscased
 					{ name: 'Get STIX', value: 'getStix', description: 'STIX 2.1 bundle for one incident', action: 'Get a STIX bundle' },
 					{ name: 'Search', value: 'search', description: 'Search incidents, entities and leak-site data', action: 'Search the corpus' },
 				],
@@ -232,6 +239,8 @@ export class ThreatCluster implements INodeType {
 				name: 'entityType',
 				type: 'options',
 				default: 'apt-group',
+				// Deliberate order (most used first), not alphabetical.
+				// eslint-disable-next-line n8n-nodes-base/node-param-options-type-unsorted-items
 				options: [
 					{ name: 'APT Group', value: 'apt-group' },
 					{ name: 'Ransomware Group', value: 'ransomware-group' },
@@ -344,7 +353,7 @@ export class ThreatCluster implements INodeType {
 				name: 'limit',
 				type: 'number',
 				default: 50,
-				typeOptions: { minValue: 1, maxValue: 100 },
+				typeOptions: { minValue: 1 },
 				displayOptions: { show: { operation: ['getMany', 'getVictims', 'search'] } },
 				description: 'Max number of results to return',
 			},

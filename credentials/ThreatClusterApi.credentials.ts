@@ -10,6 +10,7 @@ export class ThreatClusterApi implements ICredentialType {
 
 	displayName = 'ThreatCluster API';
 
+	// eslint-disable-next-line n8n-nodes-base/cred-class-field-documentation-url-miscased
 	documentationUrl = 'https://threatcluster.io/about/api-reference';
 
 	properties: INodeProperties[] = [
