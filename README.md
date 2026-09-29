@@ -5,7 +5,8 @@ workflows: incident clusters, CVEs with exploitation signals, validated
 indicators, and ransomware leak-site activity.
 
 Every plan including Free gets a read-only API key, so you can build and test
-this without talking to anyone.
+this without talking to anyone. The [n8n integration page](https://threatcluster.io/integrations/n8n)
+covers install, credentials and example workflows.
 
 ## Installation
 
@@ -21,7 +22,8 @@ npm install n8n-nodes-threatcluster
 
 ## Credential
 
-Create an API key at threatcluster.io under **Settings → API & Feeds**, then add
+Create an API key at [threatcluster.io/get-started](https://threatcluster.io/get-started)
+(or later under **Settings → API & Feeds**), then add
 a **ThreatCluster API** credential in n8n and paste it in. The credential test
 calls `GET /me`, which costs zero credits, so testing never spends your budget.
 
