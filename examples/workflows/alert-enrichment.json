@@ -1,0 +1,140 @@
+{
+  "name": "Enrich a SIEM alert",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "siem-alert",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Alert from the SIEM",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "siem-alert"
+    },
+    {
+      "parameters": {
+        "resource": "vulnerability",
+        "operation": "get",
+        "cveId": "={{ $json.body.cve }}"
+      },
+      "name": "Look up the CVE",
+      "type": "n8n-nodes-threatcluster.threatCluster",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f0",
+              "name": "cve",
+              "value": "={{ $json.cve_id }}",
+              "type": "string"
+            },
+            {
+              "id": "f1",
+              "name": "severity",
+              "value": "={{ $json.cvss_v3_severity }} {{ $json.cvss_v3_score }}",
+              "type": "string"
+            },
+            {
+              "id": "f2",
+              "name": "exploited_in_the_wild",
+              "value": "={{ $json.in_kev ? 'yes, in CISA KEV since ' + $json.kev_added_date : 'no KEV entry' }}",
+              "type": "string"
+            },
+            {
+              "id": "f3",
+              "name": "public_exploit",
+              "value": "={{ $json.has_exploit ? 'yes' : 'none recorded' }}",
+              "type": "string"
+            },
+            {
+              "id": "f4",
+              "name": "priority",
+              "value": "={{ $json.in_kev ? 'P1' : ($json.epss_score >= 0.1 ? 'P2' : 'P3') }}",
+              "type": "string"
+            },
+            {
+              "id": "f5",
+              "name": "reference",
+              "value": "=https://threatcluster.io/entities/cve/{{ $json.cve_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "name": "Add a verdict",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "name": "Reply to the SIEM",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Alert from the SIEM": {
+      "main": [
+        [
+          {
+            "node": "Look up the CVE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Look up the CVE": {
+      "main": [
+        [
+          {
+            "node": "Add a verdict",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add a verdict": {
+      "main": [
+        [
+          {
+            "node": "Reply to the SIEM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

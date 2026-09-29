@@ -1,0 +1,129 @@
+{
+  "name": "Morning threat briefing",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "30 7 * * 1-5"
+            }
+          ]
+        }
+      },
+      "name": "Weekdays at 07:30",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "threat",
+        "operation": "getMany",
+        "timeFilter": "24h",
+        "sortBy": "trending"
+      },
+      "name": "Trending incidents",
+      "type": "n8n-nodes-threatcluster.threatCluster",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "name": "Top 5",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const lines = $input.all().map((i, n) => `${n + 1}. ${i.json.ai_title} (score ${Math.round(i.json.threat_score)}, ${i.json.article_count} articles)\\n   https://threatcluster.io/cluster/${i.json.slug}`);\nreturn [{ json: { text: `Threat briefing, ${$now.toFormat('d LLLL yyyy')}\\n\\n${lines.join('\\n')}` } }];"
+      },
+      "name": "Write the briefing",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://hooks.slack.com/services/REPLACE/WITH/YOURS",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: $json.text }) }}",
+        "options": {}
+      },
+      "name": "Post to Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        960,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Weekdays at 07:30": {
+      "main": [
+        [
+          {
+            "node": "Trending incidents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trending incidents": {
+      "main": [
+        [
+          {
+            "node": "Top 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Top 5": {
+      "main": [
+        [
+          {
+            "node": "Write the briefing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write the briefing": {
+      "main": [
+        [
+          {
+            "node": "Post to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

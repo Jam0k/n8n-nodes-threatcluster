@@ -1,0 +1,93 @@
+{
+  "name": "Alert on each new exploited CVE",
+  "nodes": [
+    {
+      "parameters": {
+        "event": "newExploitedCve",
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyX",
+              "value": 30,
+              "unit": "minutes"
+            }
+          ]
+        }
+      },
+      "name": "New exploited CVE",
+      "type": "n8n-nodes-threatcluster.threatClusterTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f0",
+              "name": "text",
+              "value": "=New exploited CVE: {{ $json.cve_id }} ({{ $json.cvss_v3_severity }} {{ $json.cvss_v3_score }})\nhttps://threatcluster.io/entities/cve/{{ $json.cve_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      },
+      "name": "Write the alert",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://hooks.slack.com/services/REPLACE/WITH/YOURS",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ text: $json.text }) }}",
+        "options": {}
+      },
+      "name": "Post to Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "New exploited CVE": {
+      "main": [
+        [
+          {
+            "node": "Write the alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write the alert": {
+      "main": [
+        [
+          {
+            "node": "Post to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
